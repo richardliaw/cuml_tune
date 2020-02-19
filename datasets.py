@@ -26,6 +26,10 @@ import os
 import sys
 from enum import Enum
 import pickle
+try:
+    import progressbar
+except ImportError:
+    progressbar = None
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_svmlight_file
@@ -64,8 +68,23 @@ def prepare_dataset(dataset_folder, dataset, nrows):
     return prepare_function(dataset_folder, nrows)
 
 
+def show_progress(block_num, block_size, total_size):
+    if not progressbar:
+        return
+    pbar = progressbar.ProgressBar(maxval=total_size)
+    pbar.start()
+
+    downloaded = block_num * block_size
+    if downloaded < total_size:
+        pbar.update(downloaded)
+    else:
+        pbar.finish()
+        pbar = None
+
+
 def prepare_airline(dataset_folder, nrows):  # pylint: disable=too-many-locals
     url = 'http://kt.ijs.si/elena_ikonomovska/datasets/airline/airline_14col.data.bz2'
+    dataset_folder = os.path.expanduser(dataset_folder)
     local_url = os.path.join(dataset_folder, os.path.basename(url))
     pickle_url = os.path.join(dataset_folder,
                               "airline"
@@ -73,7 +92,7 @@ def prepare_airline(dataset_folder, nrows):  # pylint: disable=too-many-locals
     if os.path.exists(pickle_url):
         return pickle.load(open(pickle_url, "rb"))
     if not os.path.isfile(local_url):
-        urlretrieve(url, local_url)
+        urlretrieve(url, local_url, show_progress)
 
     cols = [
         "Year", "Month", "DayofMonth", "DayofWeek", "CRSDepTime",

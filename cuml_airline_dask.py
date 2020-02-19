@@ -31,7 +31,6 @@ n_streams = 8 # Performance optimization
 
 
 X_cudf_train = cudf.DataFrame.from_pandas(X_train)
-# X_cudf_test = cudf.DataFrame.from_pandas(X_test)
 y_cudf_train = cudf.Series(y_train.values)
 
 n_partitions = n_workers
@@ -49,3 +48,10 @@ cuml_model = cumlDaskRF(
 
 cuml_model.fit(X_train_dask, y_train_dask)
 wait(cuml_model.rfs)
+
+
+X_cudf_test = cudf.DataFrame.from_pandas(X_test)
+X_train_test = dask_cudf.from_cudf(X_cudf_test, npartitions=n_partitions)
+
+
+
