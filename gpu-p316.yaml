@@ -49,8 +49,9 @@ setup_commands:
         tmux new -d -s rapids
         'docker pull rapidsai/rapidsai:cuda10.0-runtime-ubuntu18.04'
     - tmux new -d -s my-session 'cd cuml_tune && python downloads.py'
-    - pip install ray # you may need to
+    # - pip install ray # you may need to
     #- docker run --gpus all --rm -it -v ~/data:/data -v /home/ubuntu/cuml_tune:/rapids/notebooks/cuml_tune --shm-size=60gb -p 8888:8888 -p 8787:8787 -p 8786:8786 rapidsai/rapidsai:cuda10.0-runtime-ubuntu18.04
+    # inside docker: pip install https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.9.0.dev0-cp36-cp36m-manylinux1_x86_64.whl gputil ray[tune]
 
 file_mounts:
     /home/ubuntu/cuml_tune/: /Users/rliaw/Research/ec2/cuml_tune/
